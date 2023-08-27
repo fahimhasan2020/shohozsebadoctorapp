@@ -8,6 +8,7 @@ import {
 import React, { Component } from 'react'
 import {connect} from "react-redux"
 import OTPInputView from '@twotalltotems/react-native-otp-input'
+import { colors } from '../constants/colors';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -24,6 +25,12 @@ export class Login extends Component {
 
   login=()=>{
     this.setState({requesting:true});
+    if(this.state.phoneNumber === ''){
+      ToastAndroid.show('Phone number required',ToastAndroid.SHORT);
+    }
+    if(this.state.phoneNumber.length > 10 || this.state.phoneNumber.length < 10){
+      ToastAndroid.show('Number should be 10 charracter only',ToastAndroid.SHORT);
+    }
     
     fetch(this.props.host+'login',{
       method: 'POST',
@@ -33,7 +40,6 @@ export class Login extends Component {
       },
       body: JSON.stringify({phone_number: this.state.phoneNumber})
     }).then((response)=>response.json()).then((responseJson)=>{
-     
       if(responseJson.hasOwnProperty("errors")){
         this.setState({requesting:false});
         if(responseJson.errors.hasOwnProperty("phone_number")){
@@ -54,13 +60,6 @@ export class Login extends Component {
       }else{
         this.setState({otp:true,serverOtp:responseJson.otp,requesting:false});
         ToastAndroid.show("Otp has been send to your number.",ToastAndroid.SHORT,ToastAndroid.BOTTOM);
-        startOtpListener(message => {
-          const otp = /(\d{4})/g.exec(message)[1];
-          this.setState({finalOtp:otp,otpInput:otp});
-          setTimeout(()=>{
-            this.verifyOtp();
-          },1000);
-        });
       }
     }).catch(e=>{
       this.setState({requesting:false});
@@ -77,10 +76,13 @@ export class Login extends Component {
         },
         body: JSON.stringify({phone_number: this.state.phoneNumber})
        }).then((response)=>response.json()).then((responseJson)=>{
+        AsyncStorage.setItem('loggedIn',"true");
+        AsyncStorage.setItem('id',responseJson.user.id.toString());
+        AsyncStorage.setItem('token',responseJson.token);
         this.props.changeAccessToken(responseJson.token);
         this.props.changeProfile(responseJson.user);
         this.props.changeLogged(true);
-        if(responseJson.user.active == 1){
+        if(responseJson.user.online == "1"){
           this.props.changeActivity(true);
         }else{
           this.props.changeActivity(false);
@@ -109,11 +111,11 @@ export class Login extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle={'light-content'} backgroundColor="#87419a" />
+        <StatusBar barStyle={'light-content'} backgroundColor={colors.themeColor} />
         <View style={{backgroundColor:'white',width:120,height:120,alignSelf:'center',justifyContent:'center',borderRadius:10,marginTop:windowHeight*0.2}}>
           <Image source={require('../assets/logo.png')} style={{height:100,width:100,alignSelf:'center'}} />
         </View>
-        <Text style={{fontSize:20,color:'white',fontWeight:'bold',alignSelf:'center',marginTop:20}}>SHOHOZ SEBA NURSING</Text>
+        <Text style={{fontSize:20,color:'white',fontWeight:'bold',alignSelf:'center',marginTop:20}}>SHOHOZ SEBA DOCTORS</Text>
         <Text style={{fontSize:15,color:'white',alignSelf:'center',marginTop:4,letterSpacing:2}}>Sign in to continue</Text>
         <View style={styles.cardView}>
           {!this.state.otp?<View>
@@ -123,7 +125,7 @@ export class Login extends Component {
             onPress={()=>{
             this.login();
             }}
-            style={{width:'90%',elevation:10,padding:10,marginTop:10,alignItems:'center',borderRadius:10,backgroundColor:'#87419a'}}>
+            style={{width:'90%',elevation:10,padding:10,marginTop:10,alignItems:'center',borderRadius:10,backgroundColor:colors.themeColor}}>
             {!this.state.requesting?<Text style={{color:'white'}}>LOGIN</Text>:<ActivityIndicator color={'white'} size={'small'} />}
             </TouchableOpacity>
             </View>:<View>
@@ -145,8 +147,8 @@ export class Login extends Component {
           /></View>}
           <View style={{position:'absolute',bottom:10,justifyContent:'center',flexDirection:'row',alignItems:'center',width:'100%'}}>
              <Text style={{fontWeight:'bold'}}>Don't have account? </Text><TouchableOpacity
-             onPress={()=>{ Linking.openURL("https://shohozseba.com/nursing/registration");}}
-             style={{marginBottom:0,paddingBottom:0}}><Text style={{color:'#87419a',fontWeight:'bold',marginBottom:0}}>Register now</Text></TouchableOpacity>
+             onPress={()=>{this.props.navigation.navigate('Register');}}
+             style={{marginBottom:0,paddingBottom:0}}><Text style={{color:colors.themeColor,fontWeight:'bold',marginBottom:0}}>Register now</Text></TouchableOpacity>
           </View>
           
         </View>
@@ -173,7 +175,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps,mapDispatchToProps)(Login);
 const styles = StyleSheet.create({
-  container:{flex:1,backgroundColor:'#87419a'},
+  container:{flex:1,backgroundColor:colors.themeColor},
   cardView:{position:'absolute',bottom:0,left:0,right:0,width:'100%',height:windowHeight*0.5,backgroundColor:'white',borderTopLeftRadius:20,borderTopRightRadius:20,elevation:10,paddingLeft:30,paddingTop:40},
   inputNumber:{width:'90%',padding:5,borderWidth:2,borderColor:'#ccc',borderRadius:10},
   borderStyleBase: {
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 45,
     borderWidth: 2,
-    backgroundColor:'#87419a',
+    backgroundColor:colors.themeColor,
     color:'white'
     // borderBottomWidth: 2,
   },

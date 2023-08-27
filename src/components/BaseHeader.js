@@ -1,7 +1,8 @@
 import { Text, View,Switch,Image,StatusBar } from 'react-native'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors } from '../constants/colors';
 export class BaseHeader extends Component {
   state = {
     service:false
@@ -14,18 +15,20 @@ export class BaseHeader extends Component {
         <View style={{flexDirection:'row'}}>
            <Switch
       style={{height:30}}
-      trackColor={{ false: "#767577", true: "purple" }}
-      thumbColor={this.props.activity ? "purple" : "#f4f3f4"}
+      trackColor={{ false: "#767577", true: colors.themeColor }}
+      thumbColor={this.props.activity ? colors.themeColor : "#f4f3f4"}
       ios_backgroundColor="#3e3e3e"
-      onValueChange={()=>{
+      onValueChange={async()=>{
+        const userId =  await AsyncStorage.getItem('id');
+        const token =  await AsyncStorage.getItem('token');
         if(this.props.activity){
           this.props.changeActivity(false);
-          console.log('false pressed');
-          fetch(this.props.host+'activity/change/'+this.props.id+'/0')
+          //console.log('false pressed');
+          fetch(this.props.host+'update/online/'+userId+'/0',{method:"GET",headers:{"Authorization":"Bearer "+token}});
         }else{
-          console.log('True pressed');
+          //console.log('True pressed');
           this.props.changeActivity(true);
-          fetch(this.props.host+'activity/change/'+this.props.id+'/1')
+          fetch(this.props.host+'update/online/'+userId+'/1',{method:"GET",headers:{"Authorization":"Bearer "+token}});
         }
        }}
       value={this.props.activity}

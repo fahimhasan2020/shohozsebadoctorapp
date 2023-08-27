@@ -2,6 +2,7 @@ import { Text, StyleSheet, View,StatusBar,Image,Easing,Animated,LogBox,ToastAndr
 import React, { Component } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {connect} from "react-redux"
+import { colors } from '../constants/colors';
 
 export class Splash extends Component {
   state = {
@@ -26,6 +27,7 @@ export class Splash extends Component {
   {
     toValue: 20,
     duration: 3000, 
+    useNativeDriver: false
   }
 ).start()
   Animated.timing(
@@ -40,23 +42,20 @@ const value = await AsyncStorage.getItem('loggedIn')
 if(value !== null) {
       if(value === "true"){
         const userId =  await AsyncStorage.getItem('id');
-       
-        fetch(this.props.host+'single/'+userId).then((response)=>response.json()).then((responseJson)=>{
-          console.log(responseJson.user);
-          setTimeout(()=>{ this.props.changeLogged(false); 
-          this.props.changeProfile(responseJson.user);
-          this.props.changeLogged(true);},2000);
-          if(responseJson.user.active == 1){
-            this.props.changeActivity(true);
-          }else{
-            this.props.changeActivity(false);
+        const token =  await AsyncStorage.getItem('token');
+        fetch(this.props.host+'single',{method:"GET",headers:{"Authorization":"Bearer "+token}}).then((response)=>response.json()).then((responseJson)=>{
+          if(responseJson.hasOwnProperty('user')){
+             console.log(responseJson.user);
+            setTimeout(()=>{ this.props.changeLogged(false); 
+            this.props.changeProfile(responseJson.user);
+            this.props.changeLogged(true);},2000);
+            if(responseJson.user.online == "1"){
+              this.props.changeActivity(true);
+            }else{
+              this.props.changeActivity(false);
+            }
           }
         }).catch(e=>{
-          ToastAndroid.showWithGravity(
-           "Failed to connect internet",
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER
-          );
           this.props.navigation.navigate('Login')
         })
       }else if(value === "false"){
@@ -80,10 +79,10 @@ if(value !== null) {
         <StatusBar barStyle={'dark-content'} backgroundColor={'white'} />
         <Animated.Image source={require('../assets/logo.png')} style={{width:120,height:120,transform:[{rotateY: this.spin}]}} />
         <View>
-           <Animated.Text style={{fontSize:20,fontWeight:'bold',color:'purple',textTransform:'uppercase',opacity:this.state.logoTextOpacity}}>Shohoz Seba NURSING</Animated.Text>
+           <Animated.Text style={{fontSize:20,fontWeight:'bold',color:colors.themeColor,textTransform:'uppercase',opacity:this.state.logoTextOpacity}}>Shohoz Seba Doctor</Animated.Text>
         </View>
        
-        <Animated.Text style={{position:'absolute',bottom:20,alignSelf:'center',fontWeight:'bold',color:'#ccc',opacity:this.state.logoTextOpacity}}>Developer By Minhajul Abedin</Animated.Text>
+        <Animated.Text style={{position:'absolute',bottom:20,alignSelf:'center',fontWeight:'bold',color:'#ccc',opacity:this.state.logoTextOpacity}}>Developed By Minhajul Abedin</Animated.Text>
       </View>
     )
   }

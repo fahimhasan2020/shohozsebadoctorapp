@@ -7,7 +7,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import  Ionicons from 'react-native-vector-icons/Ionicons';
 import {connect} from "react-redux"
-import {Login,Accounts,EditProfile,Forgot,History,HistoryDetails,Home,MessageDetails,Messages,NotificationDetails,Notifications,Offers,OffersDetails,OrderDetails,Orders,Profile,ServiceDetails,Services,Settings,Splash,More,TransectionHistory,ServiceHistory,ServiceCreate,Gallery,HelpAndSupport,TermsAndConditions} from "./all"
+import {Login,Accounts,EditProfile,Forgot,History,HistoryDetails,Home,MessageDetails,Messages,NotificationDetails,Notifications,Offers,OffersDetails,OrderDetails,Orders,Profile,ServiceDetails,Services,Settings,Splash,More,TransectionHistory,ServiceHistory,ServiceCreate,Gallery,HelpAndSupport,TermsAndConditions, Register, CallPatient} from "./all"
 
 const StackLogin = createStackNavigator();
 
@@ -18,6 +18,7 @@ function LoginNavigation() {
       }}> 
       <StackLogin.Screen name="Splash" component={Splash} />
       <StackLogin.Screen name="Login" component={Login} />
+      <StackLogin.Screen name="Register" component={Register} />
       <StackLogin.Screen name="Forgot" component={Forgot} />
     </StackLogin.Navigator>
   );
@@ -49,6 +50,7 @@ function HomeNavigations() {
       <StackLogin.Screen name="Gallery" component={Gallery} />
       <StackLogin.Screen name="HelpAndSupport" component={HelpAndSupport} />
       <StackLogin.Screen name="TermsAndConditions" component={TermsAndConditions} />
+      <StackLogin.Screen name="CallPatient" component={CallPatient} />
     </StackLogin.Navigator>
   );
 }
@@ -71,15 +73,15 @@ function HomeTabs() {
       <HomeTab.Screen options={{
          tabBarIcon : ({color,size})=>(<View style={{alignItems:'center',justifyContent:'center',top:5}}>
          <MaterialIcons name="medical-services" size={size} color={color} />
-         <Text style={{color:color,fontSize:10,fontWeight:'bold',textTransform:'uppercase'}}>Service</Text>
+         <Text style={{color:color,fontSize:10,fontWeight:'bold',textTransform:'uppercase'}}>Appointment</Text>
      </View>)
       }} name="Services" component={Services} />
-      <HomeTab.Screen options={{
+      {/* <HomeTab.Screen options={{
          tabBarIcon : ({color,size})=>(<View style={{alignItems:'center',justifyContent:'center',top:5}}>
          <MaterialIcons name="add-shopping-cart" size={size} color={color} />
          <Text style={{color:color,fontSize:10,fontWeight:'bold',textTransform:'uppercase'}}>Order</Text>
      </View>)
-      }} name="Orders" component={Orders} />
+      }} name="Orders" component={Orders} /> */}
       <HomeTab.Screen options={{
         tabBarIcon : ({color,size})=>(<View style={{alignItems:'center',justifyContent:'center',top:5}}>
         {notification<1?null:<View style={{backgroundColor:'red',position:'absolute',top:-10,right:15,zIndex:3,borderRadius:8,padding:3,paddingLeft:4,paddingRight:4}}>

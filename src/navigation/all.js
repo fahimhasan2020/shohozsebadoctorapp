@@ -25,6 +25,7 @@ import ServiceCreate from "../pages/ServiceCreate"
 import Gallery from "../pages/Gallery"
 import HelpAndSupport from "../pages/HelpAndSupport"
 import TermsAndConditions from "../pages/TermsAndConditions"
+import Register from "../pages/Register"
+import CallPatient from "../pages/CallPatient"
 
-
-export {Login,Gallery,ServiceCreate,ServiceHistory,TransectionHistory,Accounts,EditProfile,Forgot,History,HistoryDetails,Home,MessageDetails,Messages,NotificationDetails,Notifications,Offers,OffersDetails,OrderDetails,Orders,Profile,ServiceDetails,Services,Settings,Splash,More,HelpAndSupport,TermsAndConditions}
+export {Login,Register,CallPatient,Gallery,ServiceCreate,ServiceHistory,TransectionHistory,Accounts,EditProfile,Forgot,History,HistoryDetails,Home,MessageDetails,Messages,NotificationDetails,Notifications,Offers,OffersDetails,OrderDetails,Orders,Profile,ServiceDetails,Services,Settings,Splash,More,HelpAndSupport,TermsAndConditions}
